@@ -31,11 +31,14 @@ public class Ticket {
 
     private LocalDateTime issueAt;
 
-    public static Ticket issue(final TicketPurchaseRequestDto ticketPurchaseRequestDto, final LocalDateTime now) {
+    private Boolean isVip;
+
+    public static Ticket issue(final TicketPurchaseRequestDto ticketPurchaseRequestDto, final LocalDateTime now, final Boolean vipTicket) {
         return Ticket.builder()
                 .customerId(ticketPurchaseRequestDto.getCustomerId())
                 .concertId(ticketPurchaseRequestDto.getConcertId())
                 .issueAt(now)
+                .isVip(vipTicket)
                 .build();
     }
 }

@@ -26,6 +26,10 @@ public class Concert {
 
     private Long ticketQuantity;
 
+    private Long totalSeatCount;
+
+    private Long vipSeatCount;
+
     private LocalDateTime targetDateTime;
 
     public boolean hasRemainedTicket() {
@@ -38,5 +42,9 @@ public class Concert {
 
     public void sellTicket() {
         this.ticketQuantity = this.ticketQuantity - 1;
+    }
+
+    public boolean isVipTicketRemained() {
+        return (totalSeatCount - ticketQuantity) < vipSeatCount;
     }
 }

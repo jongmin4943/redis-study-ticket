@@ -31,7 +31,7 @@ public class ConcertService {
         LocalDateTime now = LocalDateTime.now();
         this.validConcert(concert, ticketPurchaseRequestDto.getCustomerId(), now);
 
-        TicketDto ticketDto = ticketService.issueTicket(ticketPurchaseRequestDto, now);
+        TicketDto ticketDto = ticketService.issueTicket(ticketPurchaseRequestDto, now, concert.isVipTicketRemained());
         CustomerDto customerDto = customerService.buyTicket(ticketDto);
         concert.sellTicket();
 
