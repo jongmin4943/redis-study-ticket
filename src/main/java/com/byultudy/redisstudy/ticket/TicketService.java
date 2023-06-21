@@ -12,6 +12,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
 
     public TicketDto issueTicket(final TicketPurchaseRequestDto ticketPurchaseRequestDto, final LocalDateTime now) {
+
         Ticket saved = ticketRepository.save(Ticket.issue(ticketPurchaseRequestDto, now));
         return TicketDto.from(saved);
     }

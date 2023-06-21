@@ -28,14 +28,14 @@ class ConcertServiceTest {
 
         Concert concert = Concert.builder()
                 .targetDateTime(LocalDateTime.now().plusDays(1))
-                .ticketQuantity(100L)
+                .ticketQuantity(1000L)
                 .build();
         concertRepository.save(concert);
 
-        List<Customer> customers = IntStream.range(0, 10000)
+        List<Customer> customers = IntStream.rangeClosed(1, 10000)
                 .mapToObj(i ->
                         Customer.builder()
-                                .name("test")
+                                .name("test-" + i)
                                 .build())
                 .toList();
         customerRepository.saveAll(customers);

@@ -3,6 +3,7 @@ package com.byultudy.redisstudy.concert;
 
 import com.byultudy.redisstudy.common.exception.ConcertNotExistException;
 import com.byultudy.redisstudy.common.exception.ConcertAlreadyEndedException;
+import com.byultudy.redisstudy.common.exception.TicketAlreadyOwnedException;
 import com.byultudy.redisstudy.common.exception.TicketNotRemainedException;
 import com.byultudy.redisstudy.customer.CustomerDto;
 import com.byultudy.redisstudy.customer.CustomerService;
@@ -19,7 +20,6 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class ConcertService {
-
     private final ConcertRepository concertRepository;
     private final TicketService ticketService;
     private final CustomerService customerService;
@@ -29,7 +29,8 @@ public class ConcertService {
         Concert concert = this.getConcert(ticketPurchaseRequestDto.getConcertId());
 
         LocalDateTime now = LocalDateTime.now();
-        this.validConcert(concert, now);
+        this.validConcert(concert, ticketPurchaseRequestDto.getCustomerId(), now);
+
         TicketDto ticketDto = ticketService.issueTicket(ticketPurchaseRequestDto, now);
         CustomerDto customerDto = customerService.buyTicket(ticketDto);
         concert.sellTicket();
@@ -37,12 +38,15 @@ public class ConcertService {
         return TicketPurchaseResultDto.from(concert, ticketDto, customerDto);
     }
 
-    private void validConcert(final Concert concert, final LocalDateTime now) {
+    private void validConcert(final Concert concert, final Long customerId, final LocalDateTime now) {
         if (!concert.hasRemainedTicket()) {
             throw new TicketNotRemainedException();
         }
         if (concert.isEnded(now)) {
             throw new ConcertAlreadyEndedException();
+        }
+        if (customerService.hasTicket(customerId)) {
+            throw new TicketAlreadyOwnedException(customerId);
         }
     }
 

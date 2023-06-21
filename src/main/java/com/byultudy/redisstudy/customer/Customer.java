@@ -1,5 +1,6 @@
 package com.byultudy.redisstudy.customer;
 
+import com.byultudy.redisstudy.common.exception.TicketAlreadyOwnedException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,13 @@ public class Customer {
     private Long ticketId;
 
     public void receiveTicket(final Long ticketId) {
+        if (this.hasTicket()) {
+            throw new TicketAlreadyOwnedException(this.id);
+        }
         this.ticketId = ticketId;
+    }
+
+    public boolean hasTicket() {
+        return this.ticketId != null;
     }
 }

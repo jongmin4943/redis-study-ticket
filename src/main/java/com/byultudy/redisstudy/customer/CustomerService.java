@@ -11,9 +11,18 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     public CustomerDto buyTicket(final TicketDto ticketDto) {
-        Customer customer = customerRepository.findById(ticketDto.getCustomerId())
-                .orElseThrow(() -> new CustomerNotExistException(ticketDto.getCustomerId()));
+        Customer customer = this.getCustomer(ticketDto.getCustomerId());
         customer.receiveTicket(ticketDto.getTicketId());
         return CustomerDto.from(customer);
+    }
+
+    public boolean hasTicket(final Long customerId) {
+        Customer customer = this.getCustomer(customerId);
+        return customer.hasTicket();
+    }
+
+    private Customer getCustomer(final Long customerId) {
+        return customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotExistException(customerId));
     }
 }
