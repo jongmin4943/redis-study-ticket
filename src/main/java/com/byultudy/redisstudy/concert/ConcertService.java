@@ -1,7 +1,6 @@
 package com.byultudy.redisstudy.concert;
 
 
-import com.byultudy.redisstudy.common.exception.ConcertNotExistException;
 import com.byultudy.redisstudy.common.exception.ConcertAlreadyEndedException;
 import com.byultudy.redisstudy.common.exception.TicketAlreadyOwnedException;
 import com.byultudy.redisstudy.common.exception.TicketNotRemainedException;
@@ -22,15 +21,16 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ConcertService {
     private static final String REDIS_LOCK_PREFIX = "concert_purchase_id:";
-    private final ConcertRepository concertRepository;
+    private final ConcertCacheService concertCacheService;
     private final TicketService ticketService;
     private final CustomerService customerService;
     private final RedisLockService redisLockService;
 
+
     @Transactional
     public TicketPurchaseResultDto purchaseTicket(final TicketPurchaseRequestDto ticketPurchaseRequestDto) {
         return redisLockService.tryWithLock(this.generateLockKey(ticketPurchaseRequestDto), () -> {
-            Concert concert = this.getConcert(ticketPurchaseRequestDto.getConcertId());
+            Concert concert = concertCacheService.getConcert(ticketPurchaseRequestDto.getConcertId());
 
             LocalDateTime now = LocalDateTime.now();
             this.validConcert(concert, ticketPurchaseRequestDto.getCustomerId(), now);
@@ -39,6 +39,7 @@ public class ConcertService {
             CustomerDto customerDto = customerService.buyTicket(ticketDto);
             concert.sellTicket();
 
+            concertCacheService.saveConcertAfterCommit(concert);
             return TicketPurchaseResultDto.from(concert, ticketDto, customerDto);
         });
     }
@@ -57,10 +58,5 @@ public class ConcertService {
         if (customerService.hasTicket(customerId)) {
             throw new TicketAlreadyOwnedException(customerId);
         }
-    }
-
-    private Concert getConcert(final Long concertId) {
-        return concertRepository.findById(concertId)
-                .orElseThrow(() -> new ConcertNotExistException(concertId));
     }
 }
