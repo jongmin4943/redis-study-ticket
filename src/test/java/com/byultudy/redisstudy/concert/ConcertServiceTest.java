@@ -31,8 +31,8 @@ class ConcertServiceTest {
 
         Concert concert = Concert.builder()
                 .targetDateTime(LocalDateTime.now().plusDays(1))
-                .ticketQuantity(1000L)
-                .totalSeatCount(1000L)
+                .ticketQuantity(100L)
+                .totalSeatCount(100L)
                 .vipSeatCount(10L)
                 .build();
         concertRepository.save(concert);
