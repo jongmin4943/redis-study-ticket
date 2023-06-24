@@ -14,13 +14,14 @@ public class TicketDto {
     private Long customerId;
     private Long concertId;
     private LocalDateTime issueAt;
-
+    private Boolean isVip;
     public static TicketDto from(final Ticket ticket) {
         return TicketDto.builder()
                 .ticketId(ticket.getId())
                 .customerId(ticket.getCustomerId())
                 .concertId(ticket.getConcertId())
                 .issueAt(ticket.getIssueAt())
+                .isVip(ticket.getIsVip())
                 .build();
     }
 }
