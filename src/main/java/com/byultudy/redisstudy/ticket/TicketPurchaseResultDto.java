@@ -29,4 +29,12 @@ public class TicketPurchaseResultDto {
                 .customerName(customer.getName())
                 .build();
     }
+
+    public static TicketPurchaseResultDto from(final Concert concert, final Long customerId) {
+        return TicketPurchaseResultDto.builder()
+                .concertId(concert.getId())
+                .concertDateTime(concert.getTargetDateTime())
+                .customerId(customerId)
+                .build();
+    }
 }
