@@ -34,6 +34,9 @@
 ## 결론
 
 레디스 적용 전 처리량은 약 30,000/분이지만 중복구매, 총 티켓수 초과 등 오류가 많다.
-분산락을 적용하면 처리량은 약 75/분. 중복구매나 티켓수는 정확하나 요청순 으로 선착순구매가 안된다.
+분산락을 적용하면 처리량은 약 75/분. 중복구매나 티켓수는 정확하나 요청순으로 선착순구매가 안된다. 또한 락 보유시간과 처리시간에 따라 먼저 신청한 사람이 실패 할 수 있다.
+### 선착순 구매를 실패하는 모습
+![SortedSetTicketGraph](https://jongmin4943.notion.site/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F60ac3f35-9614-4f55-9099-50dac1c246d2%2FUntitled.png?id=46f1dde0-c93d-49d4-9f3d-d2758c5dd1d6&table=block&spaceId=2344cac3-8428-47dd-9f85-7231f04a2c47&width=2000&userId=&cache=v2)
+
 분산락에 db 쿼리들을 캐싱하면 처리량이 약 6000/분 까지 올라가는것을 보아 db 캐싱이 성능이 좋다.
 단순 sorted set 만 사용할 시에는 다른 서비스에 티켓구매 로직을 넘겨야하기에 batch 나 socket 같은것을 사용해야하지만 처리량은 압도적으로 100,000/분 으로 높으며 또한 선착순구매도 가능하고 중복구매, 티켓수 오류도 없다.
